@@ -1,7 +1,8 @@
 spring:
-  jackson:
-    serialization:
-      indent-output: true
+  mvc:
+    view:
+      prefix: /WEB-INF/jsp/
+      suffix: .jsp
       
 security:
   oauth2:
@@ -17,3 +18,16 @@ security:
     resource:
       userInfoUri: https://www.googleapis.com/userinfo/v2/me
       preferTokenInfo: false
+      
+#security:
+#  oauth2:
+#    client:
+#      clientId: 233668646673605
+#      clientSecret: 33b17e044ee6a4fa383f46ec6e28ea1d
+#      accessTokenUri: https://graph.facebook.com/oauth/access_token
+#      userAuthorizationUri: https://www.facebook.com/dialog/oauth
+#      tokenName: oauth_token
+#      authenticationScheme: query
+#      clientAuthenticationScheme: form
+#    resource:
+#      userInfoUri: https://graph.facebook.com/me
