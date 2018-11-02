@@ -1,9 +1,13 @@
 package com.example.demo;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.Filter;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerProperties;
@@ -14,12 +18,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.OAuth2ClientContext;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.filter.OAuth2ClientAuthenticationProcessingFilter;
 import org.springframework.security.oauth2.client.filter.OAuth2ClientContextFilter;
 import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeResourceDetails;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.filter.CompositeFilter;
 
@@ -43,14 +50,19 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.authorizeRequests()
 					.antMatchers("/", "/login**").permitAll()
 					.anyRequest().authenticated()
-				.and().logout().logoutSuccessUrl("/").permitAll()
-				// .and()
-				// .oauth2Login()
-				// .defaultSuccessUrl("/content")
+				.and()
+					.logout().logoutSuccessUrl("/").permitAll()
 				// get our filter in before the BasicAuthenticationFilter...
 				.and().addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class);
 	}
 
+	private AuthenticationSuccessHandler asHandler = new SimpleUrlAuthenticationSuccessHandler () {
+		public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+	        this.setDefaultTargetUrl("/content");
+	        super.onAuthenticationSuccess(request, response, authentication);
+	    }
+	};
+	
 	private Filter ssoFilter() {
 
 		CompositeFilter filter = new CompositeFilter();
@@ -64,6 +76,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 				facebook().getClientId());
 		tokenServices.setRestTemplate(facebookTemplate);
 		facebookFilter.setTokenServices(tokenServices);
+		facebookFilter.setAuthenticationSuccessHandler(asHandler);
 		filters.add(facebookFilter);
 
 		OAuth2ClientAuthenticationProcessingFilter googleFilter = new OAuth2ClientAuthenticationProcessingFilter(
@@ -73,6 +86,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		tokenServices = new UserInfoTokenServices(googleResource().getUserInfoUri(), google().getClientId());
 		tokenServices.setRestTemplate(googleTemplate);
 		googleFilter.setTokenServices(tokenServices);
+		googleFilter.setAuthenticationSuccessHandler(asHandler);
 		filters.add(googleFilter);
 
 		filter.setFilters(filters);
