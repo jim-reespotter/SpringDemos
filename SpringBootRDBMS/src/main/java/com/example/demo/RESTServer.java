@@ -17,7 +17,7 @@ public class RESTServer {
 	@Autowired
 	private PersonService pSvc;
 	
-	@GetMapping ("/person")
+	@GetMapping ("/")
 	public Collection <Person> getPeople () {
 		return pSvc.getAll ();
 	}
