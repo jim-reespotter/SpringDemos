@@ -29,3 +29,15 @@ facebook:
     clientAuthenticationScheme: form
   resource:
     userInfoUri: https://graph.facebook.com/me
+    
+#office365:
+#  client:
+#    clientId: 836613ac-92a5-441d-9554-711cb75c474a
+#    clientSecret: gxgfJ707;wneLXEGLZ88((}
+#    accessTokenUri: https://login.microsoftonline.com/common/oauth2/token
+#    userAuthorizationUri: Auth URL – https://login.microsoftonline.com/common/oauth2/authorize
+#    tokenName: oauth_token
+#    authenticationScheme: query
+#    clientAuthenticationScheme: form
+#  resource:
+#    userInfoUri:   

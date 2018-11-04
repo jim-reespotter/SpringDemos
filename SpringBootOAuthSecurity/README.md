@@ -14,6 +14,9 @@ Works:
 - content page shows logout button (needs POST - CSRF) - logs out OK
 - Authentication:
 - success URL needs to be set (to /content) - OK
+- reports user claims OK
 Needs work:
 - MS auth
 - error page -> login page
+
+For MS: https://apps.dev.microsoft.com/
